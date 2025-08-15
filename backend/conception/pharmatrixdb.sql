@@ -1,59 +1,65 @@
-
 drop database if exists pharmatrixdb;
 
+CREATE DATABASE pharmatrixdb character set utf8mb4_general_ci;
 
-create database pharmatrixdb;
 use pharmatrixdb;
 
 CREATE TABLE users (
-    id_users INT PRIMARY KEY,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    phone VARCHAR(20),
-    location VARCHAR(100),
-    email VARCHAR(100) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    role VARCHAR(50) NOT NULL
+    users_id int primary key auto_increment,
+    first_name varchar(250),
+    last_name varchar(250),
+    phone varchar(250),
+    `location` varchar (250),
+    email varchar (250),
+    photo text,
+    `password` varchar(10),
+    `role` varchar(250)
 );
 
 CREATE TABLE pharmacie (
-    pharmacie_id INT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    location VARCHAR(100) NOT NULL,
-    phone VARCHAR(20) NOT NULL
+    pharmacie_id int primary key auto_increment,
+    `name` varchar(250),
+    phone varchar(250),
+    `location` varchar(250)
 );
+
+CREATE TABLE coupon (
+  coupon_id int primary key auto_increment,
+  users_id int not null,
+  reference varchar(250),
+  create_at varchar(250),
+  foreign key (users_id) references users(users_id)
+) ;
 
 CREATE TABLE all_medicament (
-    all_medicament_id INT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    description TEXT
+   all_medicament_id int primary key auto_increment,
+   `name` varchar(250),
+   `description` text,
+   photo text
 );
 
-CREATE TABLE program_id (
-    reference VARCHAR(50) PRIMARY KEY,
-    create_at DATE NOT NULL
+CREATE TABLE medicament(
+  medicament_id int primary key auto_increment,
+  all_medicament_id int not null,
+  pharmacie_id int not null,
+  price int,
+  quantite int,
+  foreign key (all_medicament_id) references all_medicament (all_medicament_id),
+  foreign key (pharmacie_id) references pharmacie (pharmacie_id)
 );
 
-CREATE TABLE coupon_medicament (
-    coupon_id INT PRIMARY KEY,
-    program_reference VARCHAR(50) NOT NULL,
-    medicament_id INT NOT NULL,
-    FOREIGN KEY (program_reference) REFERENCES program_id(reference),
-    FOREIGN KEY (medicament_id) REFERENCES all_medicament(all_medicament_id)
+create table users_pharmacie (
+    users_id int not null ,
+    pharmacie_id int not null ,
+    primary key ( users_id,pharmacie_id) ,
+    foreign key (users_id) references users(users_id),
+    foreign key (pharmacie_id) references pharmacie(pharmacie_id)
 );
 
-CREATE TABLE user_spharmacie (
-    user_id INT NOT NULL,
-    pharmacie_id INT NOT NULL,
-    PRIMARY KEY (user_id, pharmacie_id),
-    FOREIGN KEY (user_id) REFERENCES users(id_users),
-    FOREIGN KEY (pharmacie_id) REFERENCES pharmacie(pharmacie_id)
-);
-
-CREATE TABLE avoir (
-    pharmacie_id INT NOT NULL,
-    medicament_id INT NOT NULL,
-    PRIMARY KEY (pharmacie_id, medicament_id),
-    FOREIGN KEY (pharmacie_id) REFERENCES pharmacie(pharmacie_id),
-    FOREIGN KEY (medicament_id) REFERENCES all_medicament(all_medicament_id)
+create table coupon_medicament (
+   medicament_id int not null ,
+    coupon_id int not null,
+    primary key ( medicament_id, coupon_id) ,
+    foreign key (medicament_id) references medicament(medicament_id),
+    foreign key (coupon_id) references coupon(coupon_id) 
 );
